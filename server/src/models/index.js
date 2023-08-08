@@ -1,5 +1,6 @@
 const User=require("./user");
 const Form=require("./form")
+const WorkFLow=require("./workflow")
 // const UserToken=require("./userToken");
 // const Problem=require("./problem");
 // const TestCase=require("./testCase");
@@ -9,5 +10,6 @@ const Form=require("./form")
 
 module.exports={
     User,
-    Form
+    Form,
+    WorkFLow
 }

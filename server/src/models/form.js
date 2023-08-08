@@ -3,11 +3,6 @@ const Schema = mongoose.Schema;
 
 const formSchema = new Schema(
     {
-        subject: {
-            type: String,
-            required: true,
-            unique: true,
-        },
         topic: {
             type: String,
             required: true,
@@ -24,6 +19,9 @@ const formSchema = new Schema(
         body: {
             type: String,
             required: true,
+        },
+        notes:{
+            type:String,
         },
         // New fields for file upload
         file: {
