@@ -10,5 +10,6 @@ const WorkFLow=require("./workflow")
 
 module.exports={
     User,
-    Form
+    Form,
+    WorkFLow
 }
