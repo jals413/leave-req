@@ -4,7 +4,7 @@ const {ErrorHandler} = require("../utils");
 const { authUser, authAdmin } = require("../middleware");
 const router = express.Router();
 
-router.post("/signup" , async(req,res,next)=>{
+router.post("/createUser",authAdmin , async(req,res,next)=>{
 
     try {
 
@@ -27,7 +27,7 @@ router.post("/login",async(req,res,next)=>{
     }
 })
 
-router.put("/updateUser",authUser, async(req,res,next)=>{
+router.put("/updateUser",authAdmin, async(req,res,next)=>{
 
     try {
         const result = await userController.updateUser({id:req.user._id, ...req.body});

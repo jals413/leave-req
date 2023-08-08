@@ -4,9 +4,6 @@ const config = require("../config/config");
 const bcrypt = require("bcrypt");
 const {generateToken} = require("./userToken");
 const jwt = require("jsonwebtoken");
-const error = require("../middleware/error");
-
-
 
 const getUserByEmail = async({
   userEmail,
@@ -40,7 +37,7 @@ const loginUser = async ({
     const {accessToken , refreshToken} = await generateToken(user);
       return {accessToken,refreshToken};
   } catch (error) {
-    console.log(error);
+      throw error;
   }
 }
 
@@ -49,28 +46,18 @@ const loginUser = async ({
 //Create User
 const createUser = async ({
   userName,
-  firstName,
-  lastName,
   userEmail,
-  userPhone,
-  userCountry,
   userPassword,
   userRole,
-  userInstitute,
 }) => {
   try {
     const salt = await bcrypt.genSalt(Number(config.SALT));
     const hashPassword = await bcrypt.hash(userPassword, salt);
     const user = await User.create({
       userName,
-      firstName,
-      lastName,
       userEmail,
-      userPhone,
-      userCountry,
       userPassword: hashPassword,
       userRole,
-      userInstitute,
     });
 
     return user;
@@ -85,28 +72,18 @@ const createUser = async ({
 
 const updateUser = async ({ id,
   userName,
-  firstName,
-  lastName,
   userEmail,
-  userPhone,
-  userCountry,
   userPassword,
   userRole,
-  userInstitute,
 }) => {
   try {
     const user = await User.findOneAndUpdate(
       { _id: id },
       {
         userName,
-        firstName,
-        lastName,
         userEmail,
-        userPhone,
-        userCountry,
         userPassword,
         userRole,
-        userInstitute,
       }, {
       new: true,
       runValidators: true,
@@ -125,10 +102,15 @@ const updateUser = async ({ id,
 //Delete User by ID
 
 const deleteUser = async ({ id }) => {
+  try{
 
   const user = await User.findById({ _id: id })
 
   await user.remove();
+  }catch(error)
+  {
+    throw error;
+  }
 };
 
 //Get User Data
