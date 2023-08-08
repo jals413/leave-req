@@ -1,9 +1,10 @@
-
+const mongoose = require("mongoose");
 const { User } = require("../models");
 const config = require("../config/config");
 const bcrypt = require("bcrypt");
 const {generateToken} = require("./userToken");
 const jwt = require("jsonwebtoken");
+const error = require("../middleware/error");
 
 const getUserByEmail = async({
   userEmail,
@@ -37,27 +38,35 @@ const loginUser = async ({
     const {accessToken , refreshToken} = await generateToken(user);
       return {accessToken,refreshToken};
   } catch (error) {
-      throw error;
+    console.log(error);
   }
 }
-
-
 
 //Create User
 const createUser = async ({
   userName,
+  firstName,
+  lastName,
   userEmail,
+  userPhone,
+  userCountry,
   userPassword,
   userRole,
+  userInstitute,
 }) => {
   try {
     const salt = await bcrypt.genSalt(Number(config.SALT));
     const hashPassword = await bcrypt.hash(userPassword, salt);
     const user = await User.create({
       userName,
+      firstName,
+      lastName,
       userEmail,
+      userPhone,
+      userCountry,
       userPassword: hashPassword,
       userRole,
+      userInstitute,
     });
 
     return user;
@@ -66,73 +75,6 @@ const createUser = async ({
   }
 };
 
-
-
-//Update User by ID
-
-const updateUser = async ({ id,
-  userName,
-  userEmail,
-  userPassword,
-  userRole,
-}) => {
-  try {
-    const user = await User.findOneAndUpdate(
-      { _id: id },
-      {
-        userName,
-        userEmail,
-        userPassword,
-        userRole,
-      }, {
-      new: true,
-      runValidators: true,
-      useFindAndModify: false,
-    }
-    );
-    return user;
-
-  } catch (error) {
-    // console.log(error);
-    throw error;
-  }
-  
-}
-
-//Delete User by ID
-
-const deleteUser = async ({ id }) => {
-  try{
-
-  const user = await User.findById({ _id: id })
-
-  await user.remove();
-  }catch(error)
-  {
-    throw error;
-  }
-};
-
-//Get User Data
-
-const getUserData = async ({ id }) => {
-  try {
-		if (id) {
-      
-			const result1 = await User.findOne({ _id: id });
-
-			if (!result1) {
-				throw new Error("User not found");
-			}
-			return result1;
-		} else {
-      const allUsers = await User.find();			
-      return allUsers;
-		}
-	} catch (error) {
-		throw error;
-	}
-};
 
 const getUserRole = async({ token }) => {
   try {
@@ -153,4 +95,4 @@ const getUserRole = async({ token }) => {
   }
 }
 
-module.exports = { getUserData, createUser, updateUser, deleteUser, loginUser, getUserByEmail, getUserRole};
+module.exports = {createUser, loginUser, getUserByEmail, getUserRole};

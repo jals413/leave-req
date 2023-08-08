@@ -7,16 +7,11 @@ const userSchema = new Schema(
             type: String,
             required: true,
             unique: true,
-        },
+        },           
         userEmail:{
             type: String,
             required: true,
             lowercase: true,
-            unique: true,
-        },
-        userPhone:{
-            type: Number,
-            required: true,
             unique: true,
         },
         userPassword:{
@@ -27,7 +22,7 @@ const userSchema = new Schema(
             unique: false
         },
         userRole:{
-            type: String,
+            type: Number,
             required: false,
             default: 0,
         },

@@ -1,6 +1,8 @@
-const userController=require("./userController")
+const userController=require("./user")
+const userTokenController=require("./userToken")
 
 
 module.exports={
-    userController
+    userController,
+    userTokenController,
 }
