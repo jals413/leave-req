@@ -1,5 +1,4 @@
 const { Form } = require("../models"); // Import your Form model
-const error = require("../middleware/error");
 
 const createForm = async ({ subject,
     topic,
@@ -46,7 +45,7 @@ const updateFormById = async (formId, { subject, topic, body, file }) => {
                 subject,
                 topic,
                 body,
-                file
+                file,
             },
             {
                 new: true,

@@ -8,12 +8,17 @@ const workFlowSchema = new Schema(
             required: true,
             unique: true,
         },
-        aproover:{
+        approver:{
             type:[String],
             required:true,
         },
         created_by:{
             type:String
+        },
+        approvalType:{
+            type:Number,
+            required:true,
+            default:0
         }
     },
     {
@@ -21,5 +26,5 @@ const workFlowSchema = new Schema(
     }
 );
 
-const Form = mongoose.models.Form || mongoose.model('Form', workFlowSchema);
-module.exports = Form;
+const WorkFLow = mongoose.models.WorkFLow || mongoose.model('WorkFLow', workFlowSchema);
+module.exports = WorkFLow;

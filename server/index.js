@@ -3,6 +3,7 @@ const config = require("./src/config/config");
 const bodyParser = require("body-parser");
 const {dbConnect,corsConnect} = require("./src/service");
 const {errorMiddleware} = require("./src/middleware");
+const { userRouter, formRouter, workflowRouter } = require("./src/routes");
 
 const connectApp = async () => {
 
@@ -16,7 +17,9 @@ const connectApp = async () => {
 	app.use(corsConnect.corsConnect());
 
 	//Routes
-
+	app.use("/user", userRouter);
+	app.use("/form",formRouter);
+	app.use("./workflow",workflowRouter)
 	app.use(errorMiddleware);
 
 	//database connection
