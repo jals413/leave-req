@@ -3,11 +3,13 @@ const { Form,Workflow } = require("../models"); // Import your Form model
 const createForm = async ({
     topic,
     body,
+    requestor,
     file }) => {
     try {
         const result = await Form.create({
             topic,
             body,
+            requestor,
             file
         });
         return result;
@@ -68,12 +70,13 @@ const getForms = async (queryParams) => {
     try {
       const forms = await Form.find()
         .sort({ createdAt: -1 })
-        .select('topic createdAt status body requestor');
+        .select('topic createdAt status body requestor'); // Include 'requestor' in the select field list
       return forms;
     } catch (error) {
       throw error;
     }
-  }
+  };
+  
   
   const getPendingFormsForApprover = async ({userName}) => {
     try {
