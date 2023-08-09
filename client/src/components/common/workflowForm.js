@@ -42,15 +42,22 @@ const WorkflowForm = () => {
 			approvers: selectedApprovers.map((approver) => approver.value),
 			approvalType,
 		};
+		const handlePostSuccess = (response) => {
+			// Handle the success response here
+			console.log("Post request successful:", response);
+			// Optionally, you can reset form fields, show a success message, or perform other actions
+			return response
+		};
 
 		try {
 			const response = await postRequest(
 				"http://localhost:5005/api/createWorkflow",
 				formData,
-				token
+				token,
+				handlePostSuccess
 			);
-
-			if (response) {
+			console.log(response);
+			if (!response) {
 				setIsSuccessPopupVisible(true);
 				// Optionally, reset form fields or show a success message
 			} else {

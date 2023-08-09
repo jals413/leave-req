@@ -56,7 +56,6 @@ const RequestForm = () => {
       formData.file= selectedFile;
     }
 
-    console.log(formData);
     const response = await postRequest(
       "http://localhost:5005/api/submitForm",
       formData,

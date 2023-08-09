@@ -86,7 +86,7 @@ const getForms = async (queryParams) => {
   
       // Get all workflow titles for the user
       const workflowsForApprover = await Workflow.find({
-        approver: userId
+        approver: userName
       });
   
       // Filter pending forms where form topic matches workflow title and user is an approver
