@@ -8,6 +8,7 @@ import AdminDashboard from "./components/pages/adminDashboard";
 import Auditlogs from "./components/common/auditLogs";
 import RequestorDashboard from "./components/pages/requestorDashboard";
 import PreviousRequests from "./components/common/prevRecords";
+import ApproverDashboard from "./components/pages/approverDashboard";
 
 function App() {
 	return (
@@ -21,6 +22,7 @@ function App() {
 					<Route path="/workflow-form" element={<CreateWorkflow />} />
 					<Route path="/admin-dashboard" element={<AdminDashboard />} />
 					<Route path="/requestor-dashboard" element={<RequestorDashboard />} />
+					<Route path="/approver-dashboard" element={<ApproverDashboard />} />
 					<Route path="/audit-logs" element={<Auditlogs />} />
 					<Route path="/all-records" element={<PreviousRequests />} />
 					<Route path="/login" element={<LoginForm />} />

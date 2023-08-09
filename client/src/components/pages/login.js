@@ -51,10 +51,16 @@ const LoginForm = () => {
         if (userRole === "Admin") {
           // Redirect to the workflow-form page
           navigate("/admin-dashboard");
-        } else {
-          navigate("/workflow-form")
-          console.log("User is not an Admin. Redirecting to a different page.");
+        } else if (userRole ==='Approver'){
+          navigate("/approver-dashboard")
           // TODO: Redirect to a different page for non-Admin users
+        }
+        else if(userRole === 'Requestor')
+        {
+          navigate("/requestor-dashboard")
+        }
+        else{
+          console.log("User is not an Admin. Redirecting to a different page.");
         }
       } catch (error) {
         console.error("Error decoding access token:", error);
