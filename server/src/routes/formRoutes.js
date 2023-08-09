@@ -30,7 +30,7 @@ router.get('/forms', async (req, res, next) => {
   //Route for Audit Logs or full forms
   router.get('/getForms', async (req, res,next) => {
     try {
-      const forms = await getAllForms();
+      const forms = await formController.getAllForms();
       res.json(forms);
     } catch (error){
       next(error);

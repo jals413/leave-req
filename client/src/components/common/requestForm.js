@@ -1,3 +1,6 @@
+import jwt_decode from 'jwt-decode';
+import { postRequest } from '../../utils/api';
+import Cookies from "js-cookie";
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 
@@ -33,34 +36,44 @@ const RequestForm = () => {
     setSelectedFile(event.target.files[0]);
   };
 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
   
-    // Create FormData object to hold form data
-    const formData = new FormData();
-    formData.append('topic', selectedWorkflow.value); // Assuming selectedWorkflow has the { value, label } structure
-    formData.append('body', description);
-    formData.append('requestor', document.cookie.accessToken); // Replace with actual cookie access code
+
+  try {
+    // Decode the JWT token to get the user information
+    const  token=Cookies.get("accessToken");
+    const decodedToken = jwt_decode(token);
+    const userName =decodedToken.userName;
+    console.log(decodedToken);
+    const formData = {
+			topic: selectedWorkflow.value,
+			body: description,
+			requestor:userName,
+		};
     if (selectedFile) {
-      formData.append('file', selectedFile);
+      formData.file= selectedFile;
     }
-  
-    try {
-      const response = await fetch('http://localhost:5005/api/submitForm', {
-        method: 'POST',
-        body: formData
-      });
-  
-      if (response.ok) {
-        console.log('Form submitted successfully!');
-        // Reset form fields or redirect as needed
-      } else {
-        console.error('Form submission failed.');
-      }
-    } catch (error) {
-      console.error('Error submitting form:', error);
+
+    console.log(formData);
+    const response = await postRequest(
+      "http://localhost:5005/api/submitForm",
+      formData,
+      token
+    );
+
+    if (response.ok) {
+      console.log('Form submitted successfully!');
+      // Reset form fields or redirect as needed
+    } else {
+      console.error('Form submission failed.');
     }
-  };
+  } catch (error) {
+    console.error('Error submitting form:', error);
+  }
+};
+
   
   return (
     <div className="bg-pink-100 p-10 rounded-xl shadow-md max-w-md mx-auto">

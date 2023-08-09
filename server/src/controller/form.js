@@ -68,7 +68,7 @@ const getForms = async (queryParams) => {
     try {
       const forms = await Form.find()
         .sort({ createdAt: -1 })
-        .select('topic requestor createdAt status body');
+        .select('topic createdAt status body requestor');
       return forms;
     } catch (error) {
       throw error;

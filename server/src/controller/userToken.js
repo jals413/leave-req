@@ -18,7 +18,7 @@ const createUserToken = async ({
 
 const generateToken = async(user) =>{
     try {
-        const payload = {_id:user._id , userRole:user.userRole};
+        const payload = {_id:user._id , userName:user.userName,userRole:user.userRole};
         
         const accessToken = jwt.sign(
             payload,
