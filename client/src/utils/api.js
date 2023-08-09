@@ -5,7 +5,7 @@ import DOMPurify from 'dompurify';
 const handleResponse = async (response) => {
   if (response.ok) {
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     return data;
   } else {
     const error = await response.json();

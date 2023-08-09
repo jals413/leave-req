@@ -56,7 +56,6 @@ const Auditlogs = () => {
             >
               Expand
             </button>
-
           </li>
         ))}
       </ul>
@@ -66,7 +65,6 @@ const Auditlogs = () => {
           onClose={handleClosePopup} // Pass handleClosePopup as a prop
         />
       )}
-
     </div>
   );
 };

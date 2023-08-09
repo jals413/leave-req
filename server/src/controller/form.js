@@ -19,52 +19,51 @@ const createForm = async ({
 }
 
 const getForms = async (queryParams) => {
-    try {
-      let query = {};
-  
-      // If status is given, filter by status
-      if (queryParams.status) {
-        query.status = queryParams.status;
+  try {
+    let query = {};
+
+    // Filter by status
+    query.status = "Processing"; // Filter by Processing status only
+
+    // If date range is given (today, this week, this month, this year)
+    if (queryParams.dateRange) {
+      const currentDate = new Date();
+
+      if (queryParams.dateRange === 'today') {
+        const startOfDay = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate()
+        );
+        query.createdAt = { $gte: startOfDay };
+      } else if (queryParams.dateRange === 'thisWeek') {
+        const startOfWeek = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate() - currentDate.getDay()
+        );
+        query.createdAt = { $gte: startOfWeek };
+      } else if (queryParams.dateRange === 'thisMonth') {
+        const startOfMonth = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          1
+        );
+        query.createdAt = { $gte: startOfMonth };
+      } else if (queryParams.dateRange === 'thisYear') {
+        const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
+        query.createdAt = { $gte: startOfYear };
       }
-  
-      // If date range is given (today, this week, this month, this year)
-      if (queryParams.dateRange) {
-        const currentDate = new Date();
-  
-        if (queryParams.dateRange === 'today') {
-          const startOfDay = new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth(),
-            currentDate.getDate()
-          );
-          query.createdAt = { $gte: startOfDay };
-        } else if (queryParams.dateRange === 'thisWeek') {
-          const startOfWeek = new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth(),
-            currentDate.getDate() - currentDate.getDay()
-          );
-          query.createdAt = { $gte: startOfWeek };
-        } else if (queryParams.dateRange === 'thisMonth') {
-          const startOfMonth = new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth(),
-            1
-          );
-          query.createdAt = { $gte: startOfMonth };
-        } else if (queryParams.dateRange === 'thisYear') {
-          const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
-          query.createdAt = { $gte: startOfYear };
-        }
-      }
-  
-      // Find and sort forms based on query
-      const forms = await Form.find(query).sort({ createdAt: -1 });
-      return forms;
-    } catch (error) {
-      throw error;
     }
-  };
+
+    // Find and sort forms based on query
+    const forms = await Form.find(query).sort({ createdAt: -1 });
+    return forms;
+  } catch (error) {
+    throw error;
+  }
+};
+
 
   const getAllForms = async () => {
     try {
