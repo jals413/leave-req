@@ -19,7 +19,6 @@ router.get('/forms', async (req, res, next) => {
     try {
       const queryParams = {
         dateRange: req.query.dateRange,
-        status: req.query.status,
       };
       const forms = await formController.getForms(queryParams);
       res.json(forms);
