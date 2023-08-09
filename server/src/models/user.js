@@ -22,9 +22,9 @@ const userSchema = new Schema(
             unique: false
         },
         userRole:{
-            type: Number,
+            type: String,
             required: false,
-            default: 0,
+            default: "Requester",
         },
     },
     {

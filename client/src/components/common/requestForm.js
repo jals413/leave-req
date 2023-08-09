@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-
-const workflowOptions = [
-  // Your list of workflow options here
-  { value: 'workflow1', label: 'Workflow 1' },
-  { value: 'workflow2', label: 'Workflow 2' },
-  { value: 'workflow3', label: 'Workflow 3' },
-  // ...
-];
 
 const RequestForm = () => {
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
   const [description, setDescription] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [workflowOptions, setWorkflowOptions] = useState([]);
+
+  useEffect(() => {
+    // Fetch workflow options from the API here
+    fetch('http://localhost:5005/api/workFlows')
+      .then(response => response.json())
+      .then(data => {
+        const options = data.map(workflow => ({
+          value: workflow.title,
+          label: workflow.title
+        }));
+        setWorkflowOptions(options);
+      })
+      .catch(error => console.error('Error fetching workflow options:', error));
+  }, []);
 
   const handleWorkflowChange = (selectedOption) => {
     setSelectedWorkflow(selectedOption);
@@ -26,11 +33,35 @@ const RequestForm = () => {
     setSelectedFile(event.target.files[0]);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Handle form submission logic here
+  
+    // Create FormData object to hold form data
+    const formData = new FormData();
+    formData.append('topic', selectedWorkflow.value); // Assuming selectedWorkflow has the { value, label } structure
+    formData.append('body', description);
+    formData.append('requestor', document.cookie.accessToken); // Replace with actual cookie access code
+    if (selectedFile) {
+      formData.append('file', selectedFile);
+    }
+  
+    try {
+      const response = await fetch('http://localhost:5005/api/submitForm', {
+        method: 'POST',
+        body: formData
+      });
+  
+      if (response.ok) {
+        console.log('Form submitted successfully!');
+        // Reset form fields or redirect as needed
+      } else {
+        console.error('Form submission failed.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
   };
-
+  
   return (
     <div className="bg-pink-100 p-10 rounded-xl shadow-md max-w-md mx-auto">
       <form onSubmit={handleSubmit}>

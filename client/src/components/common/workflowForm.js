@@ -1,142 +1,202 @@
-import React, { useState } from 'react';
-import Select from 'react-select';
-
-const titleOptions = [
-  // Your list of title options here
-  { value: 'title1', label: 'Women 1' },
-  { value: 'title2', label: 'Title 2' },
-  { value: 'title3', label: 'Title 3' },
-  { value: 'title4', label: 'Title 4' },
-  { value: 'title5', label: 'Title 5' },
-  { value: 'title6', label: 'Title 6' },
-  { value: 'title7', label: 'Title 7' },
-
-
-
-  // ...
-];
-
-const approverOptions = [
-  // Your list of approvers here
-  { value: 'title1', label: 'Women 1' },
-  { value: 'title2', label: 'Title 2' },
-  { value: 'title3', label: 'Title 3' },
-  { value: 'title4', label: 'Title 4' },
-  { value: 'title5', label: 'Title 5' },
-  { value: 'title6', label: 'Title 6' },
-  { value: 'title7', label: 'Title 7' },
-  // Example: { value: 'approver1', label: 'Approver 1' }
-  // ...
-];
+import Cookies from "js-cookie";
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
+import { postRequest, getRequest } from "../../utils/api";
 
 const WorkflowForm = () => {
-  const [selectedTitle, setSelectedTitle] = useState(null);
-  const [selectedApprover, setSelectedApprover] = useState(null);
-  const [approvalType, setApprovalType] = useState('');
+	const [selectedTitle, setSelectedTitle] = useState("");
+	const [selectedApprovers, setSelectedApprovers] = useState([]);
+	const [approvalType, setApprovalType] = useState("");
+	const [isSuccessPopupVisible, setIsSuccessPopupVisible] = useState(false);
+	const [isFailurePopupVisible, setIsFailurePopupVisible] = useState(false);
+	const [approverOptions, setApproverOptions] = useState([]);
 
-  const handleTitleChange = (selectedOption) => {
-    setSelectedTitle(selectedOption);
-  };
+	useEffect(() => {
+		// Retrieve the access token from the cookie
+		const token = Cookies.get("accessToken");
 
-  const handleApproverChange = (selectedOption) => {
-    setSelectedApprover(selectedOption);
-  };
+		// Fetch list of approvers
+		getRequest(
+			"http://localhost:5005/user/getApprover",
+			token,
+			handleApproverList
+		);
+	}, []);
 
-  const handleApprovalTypeChange = (event) => {
-    setApprovalType(event.target.value);
-  };
+	const handleApproverList = (response) => {
+		const mappedOptions = response.map((approver) => ({
+			value: approver.userName,
+			label: approver.userName,
+		}));
+		setApproverOptions(mappedOptions);
+	};
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Handle form submission logic here
-  };
+	const handleSubmit = async (event) => {
+		event.preventDefault();
 
-  const customFilter = (option, searchText) => {
-    return option.label.toLowerCase().includes(searchText.toLowerCase());
-  };
+		// Retrieve the access token from the cookie
+		const token = Cookies.get("accessToken");
 
+		const formData = {
+			title: selectedTitle,
+			approvers: selectedApprovers.map((approver) => approver.value),
+			approvalType,
+		};
 
-  return (
-    <div className="bg-pink-100 p-10 rounded-xl shadow-md max-w-md mx-auto">
-      <form onSubmit={handleSubmit}>
-      <div className="mb-6">
-          <label htmlFor="title" className="block text-xl font-medium mb-3">
-            Title of the Workflow
-          </label>
-          <Select
-            id="title"
-            name="title"
-            value={selectedTitle}
-            onChange={handleTitleChange}
-            options={titleOptions}
-            placeholder="Select Title"
-            isSearchable
-            filterOption={customFilter}
-            className="w-full rounded-xl bg-pink-100 p-4"
-            menuPortalTarget={document.body}
-            maxMenuHeight={150}
-          />
-        </div>
+		try {
+			const response = await postRequest(
+				"http://localhost:5005/api/createWorkflow",
+				formData,
+				token
+			);
 
-        <div className="mb-6">
-          <label htmlFor="approver" className="block text-xl font-medium mb-3">
-            Approvers
-          </label>
-          <Select
-            id="approver"
-            name="approver"
-            value={selectedApprover}
-            onChange={handleApproverChange}
-            options={approverOptions}
-            placeholder="Select Approver"
-            isSearchable
-            filterOption={customFilter}
-            className="w-full rounded-xl bg-pink-100 p-4"
-            menuPortalTarget={document.body}
-            maxMenuHeight={150}
-          />
-        </div>
+			if (response) {
+				setIsSuccessPopupVisible(true);
+				// Optionally, reset form fields or show a success message
+			} else {
+				setIsFailurePopupVisible(true);
+				// Optionally, show an error message
+			}
+		} catch (error) {
+			console.error("An error occurred:", error);
+			setIsFailurePopupVisible(true);
+		}
+	};
 
+	const closePopup = () => {
+		setIsSuccessPopupVisible(false);
+		setIsFailurePopupVisible(false);
+	};
 
-        <div className="mb-6">
-          <label className="block text-xl font-medium mb-2">Type of Approval</label>
-          <div className="block items-center space-x-20">
-            <label>
-              <input
-                type="radio"
-                name="approvalType"
-                value="type1"
-                checked={approvalType === 'type1'}
-                onChange={handleApprovalTypeChange}
-                className="mr-1"
-              />
-              Type 1
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="approvalType"
-                value="type2"
-                checked={approvalType === 'type2'}
-                onChange={handleApprovalTypeChange}
-                className="mr-1"
-              />
-              Type 2
-            </label>
-            {/* Add more radio options as needed */}
-          </div>
-        </div>
+	const customFilter = (option, searchText) => {
+		return option.label.toLowerCase().includes(searchText.toLowerCase());
+	};
 
+	return (
+		<div className="bg-pink-100 p-10 rounded-xl shadow-md max-w-md mx-auto">
+			<form onSubmit={handleSubmit}>
+				<div className="mb-6">
+					<label
+						htmlFor="title"
+						className="block text-xl font-medium mb-3"
+					>
+						Title of the Workflow
+					</label>
+					<input
+						id="title"
+						name="title"
+						type="text"
+						value={selectedTitle}
+						onChange={(event) =>
+							setSelectedTitle(event.target.value)
+						}
+						placeholder="Enter Title"
+						className="w-full rounded-xl bg-pink-100 p-4"
+					/>
+				</div>
 
-        <button 
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 w-full"
-        >
-          Create
-        </button>
-      </form>
-    </div>
-  );
+				<div className="mb-6">
+					<label
+						htmlFor="approver"
+						className="block text-xl font-medium mb-3"
+					>
+						Approvers
+					</label>
+					<Select
+						id="approver"
+						name="approver"
+						value={selectedApprovers}
+						onChange={setSelectedApprovers}
+						options={approverOptions}
+						placeholder="Select Approver"
+						isMulti // Allow multiple selections
+						closeMenuOnSelect={false} // Keep the menu open after selecting
+						filterOption={customFilter}
+						className="w-full rounded-xl bg-pink-100 p-4"
+						menuPortalTarget={document.body}
+						maxMenuHeight={150}
+					/>
+				</div>
+
+				<div className="mb-6">
+					<label className="block text-xl font-medium mb-2">
+						Type of Approval
+					</label>
+					<div className="block items-center space-x-20">
+						<label>
+							<input
+								type="radio"
+								name="approvalType"
+								value="0"
+								checked={approvalType === "0"}
+								onChange={() => setApprovalType("0")}
+								className="mr-1"
+							/>
+							All should Approve
+						</label>
+						<label>
+							<input
+								type="radio"
+								name="approvalType"
+								value="1"
+								checked={approvalType === "1"}
+								onChange={() => setApprovalType("1")}
+								className="mr-1"
+							/>
+							Atleast 2 Can Approve
+						</label>
+						<label>
+							<input
+								type="radio"
+								name="approvalType"
+								value="2"
+								checked={approvalType === "2"}
+								onChange={() => setApprovalType("2")}
+								className="mr-1"
+							/>
+							Anyone Can Approve
+						</label>
+					</div>
+				</div>
+
+				<button
+					type="submit"
+					className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 w-full"
+				>
+					Create
+				</button>
+
+				{/* Success and Failure popups */}
+				{isSuccessPopupVisible && (
+					<div className="popup success-popup">
+						<p className="text-green-600">
+							Form submitted successfully!
+						</p>
+						<button
+							className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+							onClick={closePopup}
+						>
+							Close
+						</button>
+					</div>
+				)}
+
+				{isFailurePopupVisible && (
+					<div className="popup failure-popup">
+						<p className="text-red-600">
+							Form submission failed. Please try again.
+						</p>
+						<button
+							className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+							onClick={closePopup}
+						>
+							Close
+						</button>
+					</div>
+				)}
+			</form>
+		</div>
+	);
 };
 
 export default WorkflowForm;

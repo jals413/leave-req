@@ -16,6 +16,15 @@ const getUserByEmail = async({
     console.log(error);
   }
 }
+const getApprover = async () => {
+  try {
+    const user = await User.find({ userRole: "Approver" },{ userName: 1, _id: 0 });
+    return user;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
 const loginUser = async ({
   userEmail,
@@ -45,28 +54,18 @@ const loginUser = async ({
 //Create User
 const createUser = async ({
   userName,
-  firstName,
-  lastName,
   userEmail,
-  userPhone,
-  userCountry,
   userPassword,
   userRole,
-  userInstitute,
 }) => {
   try {
     const salt = await bcrypt.genSalt(Number(config.SALT));
     const hashPassword = await bcrypt.hash(userPassword, salt);
     const user = await User.create({
       userName,
-      firstName,
-      lastName,
       userEmail,
-      userPhone,
-      userCountry,
       userPassword: hashPassword,
       userRole,
-      userInstitute,
     });
 
     return user;
@@ -95,4 +94,4 @@ const getUserRole = async({ token }) => {
   }
 }
 
-module.exports = {createUser, loginUser, getUserByEmail, getUserRole};
+module.exports = {createUser, getApprover,loginUser, getUserByEmail, getUserRole};

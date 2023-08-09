@@ -32,6 +32,16 @@ router.get("/getUserRole" , async(req,res,next)=>{
         next(new ErrorHandler(error))
     }
 })
+// Get All Approvers
+router.get("/getApprover", async (req, res, next) => {
+    try {
+      const allApprover = await userController.getApprover();
+      res.json(allApprover);
+    } catch (error) {
+      next(error);
+    }
+  });
+  
 
 
 
