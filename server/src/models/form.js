@@ -6,7 +6,6 @@ const formSchema = new Schema(
         topic: {
             type: String,
             required: true,
-            unique: true,
         },
         aprooved_by: {
             type: [String],
