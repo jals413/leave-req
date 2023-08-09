@@ -2,12 +2,14 @@ const { Form,Workflow } = require("../models"); // Import your Form model
 
 const createForm = async ({
     topic,
+    status,
     body,
     requestor,
     file }) => {
     try {
         const result = await Form.create({
             topic,
+            status,
             body,
             requestor,
             file
@@ -18,6 +20,14 @@ const createForm = async ({
     }
 }
 
+const getFormsByUser= async(userName)=>{
+  try {
+    const result =await Form.find({requestor:userName})
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
 const getForms = async (queryParams) => {
   try {
     let query = {};
@@ -102,15 +112,14 @@ const getForms = async (queryParams) => {
     }
   };
 
-const updateFormById = async (formId, { subject, topic, body, file }) => {
+const updateFormById = async (formId, { status, body,notes }) => {
     try {
         const updatedForm = await Form.findByIdAndUpdate(
             formId,
             {
-                subject,
-                topic,
+              status,
                 body,
-                file,
+                notes,
             },
             {
                 new: true,
@@ -147,5 +156,6 @@ module.exports = {
     updateFormById,
     deleteFormById,
     getAllForms,
-    getPendingFormsForApprover
+    getPendingFormsForApprover,
+    getFormsByUser
 };

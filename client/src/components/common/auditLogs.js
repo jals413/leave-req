@@ -38,34 +38,47 @@ const Auditlogs = () => {
   // console.log(workflowList);
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4">Audit Logs</h2>
-      <ul>
-        {workflowList.map((workflow) => (
-          <li key={workflow._id} className="mb-4">
-            <span className="font-bold">Workflow:</span> {workflow.topic} 
-            <br />
-            <span className="font-bold">Request Raised by:</span> {workflow.requestor} 
-            <br />
-            <span className="font-bold">Date:</span> {formatDate(workflow.createdAt)} 
-            <br />
-            <span className="font-bold">Status:</span> {workflow.status} 
-            <br />
-            <button
-              className="bg-blue-500 text-white px-2 py-1 rounded-lg hover:bg-blue-600"
-              onClick={() => handleExpandClick(workflow)} // Call handleExpandClick on button click
-            >
-              Expand
-            </button>
-          </li>
-        ))}
-      </ul>
-      {showPopup && (
-        <WorkflowPopup
-          workflow={selectedWorkflow}
-          onClose={handleClosePopup} // Pass handleClosePopup as a prop
-        />
-      )}
-    </div>
+    <h2 className="text-2xl font-semibold mb-4">Audit Logs</h2>
+    <ul>
+      {workflowList.map((workflow) => (
+        <li
+          key={workflow._id}
+          className="mb-4 border border-black p-4 rounded-lg flex flex-row"
+          style={{
+            backgroundColor:
+              workflow.status === 'Accepted'
+                ? 'lightgreen'
+                : workflow.status === 'Processing'
+                ? 'lightyellow'
+                : workflow.status === 'Rejected'
+                ? 'lightcoral'
+                : 'inherit', // Default background color
+          }}
+        >
+          <span className="font-bold pr-4 pl-4">Workflow:</span> {workflow.topic}
+          <br />
+          <span className="font-bold pr-4 pl-4">Request Raised by:</span> {workflow.requestor}
+          <br />
+          <span className="font-bold pr-4 pl-4">Date:</span> {formatDate(workflow.createdAt)}
+          <br />
+          <span className="font-bold pr-4 pl-4">Status:</span> {workflow.status}
+          <br />
+          <button
+            className="bg-blue-500 text-white px-2 py-1 ml-5 rounded-lg hover:bg-blue-600"
+            onClick={() => handleExpandClick(workflow)} // Call handleExpandClick on button click
+          >
+            Expand
+          </button>
+        </li>
+      ))}
+    </ul>
+    {showPopup && (
+      <WorkflowPopup
+        workflow={selectedWorkflow}
+        onClose={handleClosePopup} // Pass handleClosePopup as a prop
+      />
+    )}
+  </div>
   );
 };
 

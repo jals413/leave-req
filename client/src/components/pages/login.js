@@ -55,7 +55,7 @@ const LoginForm = () => {
           navigate("/approver-dashboard")
           // TODO: Redirect to a different page for non-Admin users
         }
-        else if(userRole === 'Requestor')
+        else if(userRole === 'Requestor' || userRole==='Requester')
         {
           navigate("/requestor-dashboard")
         }

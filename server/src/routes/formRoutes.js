@@ -26,6 +26,15 @@ router.get('/forms', async (req, res, next) => {
       next(error);
     }
   });
+  router.get('/getFormsByUser',async (req,res,next)=>{
+    try {
+      const userName=req.query.userName
+      const result=await formController.getFormsByUser(userName);
+      res.json(result)
+    } catch (error) {
+      next(error)
+    }
+  })
   //Route for Audit Logs or full forms
   router.get('/getForms', async (req, res,next) => {
     try {
