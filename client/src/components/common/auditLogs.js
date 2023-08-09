@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getRequest } from '../../utils/api';
 import Cookies from 'js-cookie'; // Import the 'js-cookie' library
+import WorkflowPopup from "./workflowPopup";
 
 const Auditlogs = () => {
   const formatDate = (dateString) => {
@@ -9,6 +10,9 @@ const Auditlogs = () => {
     return date.toLocaleDateString(undefined, options);
   };
   const [workflowList, setWorkflowList] = useState([]);
+  const [selectedWorkflow, setSelectedWorkflow] = useState(null); // Track selected workflow
+  const [showPopup, setShowPopup] = useState(false); // Toggle popup visibility
+
 
   useEffect(() => {
     fetchWorkflowList();
@@ -21,7 +25,17 @@ const Auditlogs = () => {
       setWorkflowList(data);
     });
   };
-  console.log(workflowList);
+
+  const handleExpandClick = (workflow) => {
+    setSelectedWorkflow(workflow);
+    setShowPopup(true); // Show popup when expand is clicked
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false); // Hide popup when close button is clicked
+  };
+
+  // console.log(workflowList);
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">Audit Logs</h2>
@@ -36,12 +50,23 @@ const Auditlogs = () => {
             <br />
             <span className="font-bold">Status:</span> {workflow.status} 
             <br />
-            <button className="bg-blue-500 text-white px-2 py-1 rounded-lg hover:bg-blue-600">
+            <button
+              className="bg-blue-500 text-white px-2 py-1 rounded-lg hover:bg-blue-600"
+              onClick={() => handleExpandClick(workflow)} // Call handleExpandClick on button click
+            >
               Expand
             </button>
+
           </li>
         ))}
       </ul>
+      {showPopup && (
+        <WorkflowPopup
+          workflow={selectedWorkflow}
+          onClose={handleClosePopup} // Pass handleClosePopup as a prop
+        />
+      )}
+
     </div>
   );
 };
